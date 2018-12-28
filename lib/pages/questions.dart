@@ -54,9 +54,8 @@ class QuestionsState extends State<Questions> {
               );
             } else if (snapshot.hasError) {
               print("The error is ${snapshot.error}");
-            } else {
-              return Center(child: CircularProgressIndicator());
             }
+            return Center(child: CircularProgressIndicator());
           },
         ),
       ),
