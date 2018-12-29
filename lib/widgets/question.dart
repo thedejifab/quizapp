@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:grapql_bloc/widgets/option.dart';
-import 'package:grapql_bloc/pages/questions.dart';
-
 String selectedOption;
 class BuildQuestions extends StatefulWidget {
   createState() => _BuildQuestionsState();

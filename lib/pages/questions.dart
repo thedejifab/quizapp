@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:grapql_bloc/model/quiz.dart';
+import 'package:grapql_bloc/pages/review.dart';
 import 'package:grapql_bloc/widgets/question.dart';
 
 class Questions extends StatefulWidget {
@@ -12,54 +13,80 @@ class QuestionsState extends State<Questions> {
   int score;
   String currentCorrectAnswer;
 
+  List<Quiz> quizzes;
+  bool areQuizzesFetched = false;
+  int quizzesLength;
+  int quizzesCount;
+
   @override
   void initState() {
     super.initState();
     id = 0;
     score = 0;
-    print("Init state just ran");
+
+    getQuizes().whenComplete(
+      () {
+        setState(() {
+          areQuizzesFetched = true;
+        });
+      },
+    ).then((onValue) {
+      quizzes = onValue;
+      quizzesLength = quizzes.length;
+      quizzesCount = quizzesLength - 1;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Build just ran");
+    if (areQuizzesFetched == true) {
+      Quiz quiz = quizzes.elementAt(id);
+      currentCorrectAnswer = quiz.correctOption;
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "${id + 1} of $quizzesLength",
+            style: TextStyle(fontSize: 18.0),
+          ),
+          backgroundColor: Colors.blueAccent,
+          elevation: 0.0,
+        ),
+        body: Container(
+            color: Colors.blueAccent,
+            child: areQuizzesFetched != false
+                ? Center(
+                    child: BuildQuestions(
+                      quiz.question,
+                      quiz.optionA,
+                      quiz.optionB,
+                      quiz.optionC,
+                      quiz.optionD,
+                    ),
+                  )
+                : Center(child: CircularProgressIndicator())),
+        floatingActionButton: id < quizzesCount ? nextButton() : submitButton(),
+      );
+    }
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "${id + 1} of 5",
-          style: TextStyle(fontSize: 18.0),
-        ),
-        actions: <Widget>[
-          Text("Score: $score"),
-        ],
-        backgroundColor: Colors.blueAccent,
-        elevation: 0.0,
-      ),
       body: Container(
+        width: double.infinity,
         color: Colors.blueAccent,
-        child: FutureBuilder(
-          future: getQuizes(),
-          builder: (BuildContext context, AsyncSnapshot<List<Quiz>> snapshot) {
-            if (snapshot.hasData) {
-              Quiz quiz = snapshot.data.elementAt(id);
-              currentCorrectAnswer = quiz.correctOption;
-              return Center(
-                child: BuildQuestions(
-                  quiz.question,
-                  quiz.optionA,
-                  quiz.optionB,
-                  quiz.optionC,
-                  quiz.optionD,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              print("The error is ${snapshot.error}");
-            }
-            return Center(child: CircularProgressIndicator());
-          },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(),
+            SizedBox(height: 12.0),
+            Text(
+              "Loading Quizzes",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.0,
+              ),
+            ),
+          ],
         ),
       ),
-      floatingActionButton: nextButton(),
     );
   }
 
@@ -85,19 +112,43 @@ class QuestionsState extends State<Questions> {
         ],
       ),
       onPressed: () {
-        print("Selected answer from last question is $selectedOption");
         if (selectedOption == currentCorrectAnswer) {
-          setState(() {
-            score++;
-          });
+          score++;
         }
-        if (id < 4) {
-          setState(() {
-            id++;
-          });
-        } else {
-          print("This is the last question");
+        setState(() {
+          id++;
+        });
+      },
+    );
+  }
+
+  Widget submitButton() {
+    return FlatButton(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            "Submit",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w400),
+          ),
+          SizedBox(width: 3.0),
+          Icon(
+            Icons.check,
+            color: Colors.white,
+          )
+        ],
+      ),
+      onPressed: () {
+        if (selectedOption == currentCorrectAnswer) {
+          score++;
         }
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
+          return Review(score, quizzesLength);
+        }));
       },
     );
   }

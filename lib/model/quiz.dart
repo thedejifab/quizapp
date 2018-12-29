@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class Quiz {
@@ -22,7 +21,7 @@ class Quiz {
 
 Future<List<Quiz>> getQuizes() async {
   String endPoint =
-      'https://opentdb.com/api.php?amount=5&category=9&difficulty=easy&type=multiple';
+      'https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple';
   final response =
       await http.get(endPoint, headers: {"Accept": "application/json"});
 
