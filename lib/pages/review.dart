@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grapql_bloc/pages/questions.dart';
+import 'package:quiz_app/pages/questions.dart';
 
 class Review extends StatelessWidget {
   final int score;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:grapql_bloc/model/quiz.dart';
-import 'package:grapql_bloc/pages/review.dart';
-import 'package:grapql_bloc/widgets/question.dart';
+import 'package:quiz_app/model/quiz.dart';
+import 'package:quiz_app/pages/review.dart';
+import 'package:quiz_app/widgets/question.dart';
 
 class Questions extends StatefulWidget {
   createState() => QuestionsState();

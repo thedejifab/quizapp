@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:grapql_bloc/pages/questions.dart';
+import 'package:quiz_app/pages/questions.dart';
 
 void main() => runApp(MyApp());
 
